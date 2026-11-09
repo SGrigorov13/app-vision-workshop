@@ -14,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppShell } from "@/components/app/AppShell";
 import { Toaster } from "@/components/ui/sonner";
+import { LangProvider } from "@/lib/i18n";
 import { MockStoreProvider } from "@/lib/mock-store";
 import { THEME_BOOT_SCRIPT, ThemeProvider, useTheme } from "@/lib/theme";
 
@@ -139,12 +140,14 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
+        <LangProvider>
         <MockStoreProvider>
           <AppShell>
             <Outlet />
           </AppShell>
           <ThemedToaster />
         </MockStoreProvider>
+        </LangProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );
