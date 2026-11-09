@@ -124,8 +124,14 @@ function MeetingDetail({ meeting: m, onBack, onChange }: { meeting: Meeting; onB
   const quorum = hasQuorum(represented, m.postponed);
 
   const finalize = () => {
-    if (!quorum) return toast.error(l("Няма кворум – протоколът не може да бъде финализиран.", "No quorum – minutes cannot be finalised."));
-    if (!m.chair || !m.secretary) return toast.error(l("Посочете председател и протоколчик.", "Set chair and secretary."));
+    if (!quorum) {
+      toast.error(l("Няма кворум – протоколът не може да бъде финализиран.", "No quorum – minutes cannot be finalised."));
+      return;
+    }
+    if (!m.chair || !m.secretary) {
+      toast.error(l("Посочете председател и протоколчик.", "Set chair and secretary."));
+      return;
+    }
     onChange((x) => ({ ...x, status: "finalized", finalizedAt: new Date().toISOString().slice(0, 10) }));
     toast.success(l("Протоколът е финализиран.", "Minutes finalised."));
   };
