@@ -8,10 +8,11 @@ import { useLang, type L, type Lang } from "@/lib/i18n";
 import { PALETTES, useTheme, type ThemeMode } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
-const ROLES: Array<{ to: "/" | "/domoupravitel" | "/kontrolen-savet"; emoji: string; label: L; short: L }> = [
+const ROLES: Array<{ to: "/" | "/domoupravitel" | "/kontrolen-savet" | "/sabraniya"; emoji: string; label: L; short: L }> = [
   { to: "/", emoji: "📱", label: { bg: "Живущ (Собственик)", en: "Resident (Owner)" }, short: { bg: "Живущ", en: "Resident" } },
   { to: "/domoupravitel", emoji: "💼", label: { bg: "Домоуправител", en: "Manager" }, short: { bg: "Домоуправител", en: "Manager" } },
   { to: "/kontrolen-savet", emoji: "⚖️", label: { bg: "Контролен съвет", en: "Supervisory Board" }, short: { bg: "Контр. съвет", en: "Board" } },
+  { to: "/sabraniya", emoji: "🗳️", label: { bg: "Събрания", en: "Assemblies" }, short: { bg: "Събрания", en: "Assemblies" } },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
