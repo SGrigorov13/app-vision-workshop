@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DomoupravitelRouteImport } from './routes/domoupravitel'
 import { Route as KontrolenSavetRouteImport } from './routes/kontrolen-savet'
+import { Route as SabraniyaRouteImport } from './routes/sabraniya'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,35 +29,44 @@ const KontrolenSavetRoute = KontrolenSavetRouteImport.update({
   path: '/kontrolen-savet',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SabraniyaRoute = SabraniyaRouteImport.update({
+  id: '/sabraniya',
+  path: '/sabraniya',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/domoupravitel': typeof DomoupravitelRoute
   '/kontrolen-savet': typeof KontrolenSavetRoute
+  '/sabraniya': typeof SabraniyaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/domoupravitel': typeof DomoupravitelRoute
   '/kontrolen-savet': typeof KontrolenSavetRoute
+  '/sabraniya': typeof SabraniyaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/domoupravitel': typeof DomoupravitelRoute
   '/kontrolen-savet': typeof KontrolenSavetRoute
+  '/sabraniya': typeof SabraniyaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/domoupravitel' | '/kontrolen-savet'
+  fullPaths: '/' | '/domoupravitel' | '/kontrolen-savet' | '/sabraniya'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/domoupravitel' | '/kontrolen-savet'
-  id: '__root__' | '/' | '/domoupravitel' | '/kontrolen-savet'
+  to: '/' | '/domoupravitel' | '/kontrolen-savet' | '/sabraniya'
+  id: '__root__' | '/' | '/domoupravitel' | '/kontrolen-savet' | '/sabraniya'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DomoupravitelRoute: typeof DomoupravitelRoute
   KontrolenSavetRoute: typeof KontrolenSavetRoute
+  SabraniyaRoute: typeof SabraniyaRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +92,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KontrolenSavetRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sabraniya': {
+      id: '/sabraniya'
+      path: '/sabraniya'
+      fullPath: '/sabraniya'
+      preLoaderRoute: typeof SabraniyaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DomoupravitelRoute: DomoupravitelRoute,
   KontrolenSavetRoute: KontrolenSavetRoute,
+  SabraniyaRoute: SabraniyaRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

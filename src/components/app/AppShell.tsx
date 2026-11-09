@@ -29,7 +29,7 @@ function TopBar() {
   const { l } = useLang();
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border/70 bg-background/80 backdrop-blur-xl">
+    <header className="print:hidden sticky top-0 z-30 border-b border-border/70 bg-background/80 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl flex-col lg:h-16 lg:flex-row lg:items-center lg:gap-6 lg:px-6">
         <div className="flex h-14 items-center justify-between px-4 lg:h-auto lg:px-0">
           <Link to="/" className="flex items-center gap-2.5">
