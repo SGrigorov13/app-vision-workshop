@@ -260,7 +260,7 @@ function VoterRow({
   initials: string;
   isYou: boolean;
   vote: VoteState;
-  onSimulate?: () => void;
+  onSimulate?: (() => void) | undefined;
 }) {
   return (
     <div
