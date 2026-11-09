@@ -8,10 +8,11 @@ import { useLang, type L, type Lang } from "@/lib/i18n";
 import { PALETTES, useTheme, type ThemeMode } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
-const ROLES: Array<{ to: "/" | "/domoupravitel" | "/kontrolen-savet"; emoji: string; label: L; short: L }> = [
+const ROLES: Array<{ to: "/" | "/domoupravitel" | "/kontrolen-savet" | "/sabraniya"; emoji: string; label: L; short: L }> = [
   { to: "/", emoji: "📱", label: { bg: "Живущ (Собственик)", en: "Resident (Owner)" }, short: { bg: "Живущ", en: "Resident" } },
   { to: "/domoupravitel", emoji: "💼", label: { bg: "Домоуправител", en: "Manager" }, short: { bg: "Домоуправител", en: "Manager" } },
   { to: "/kontrolen-savet", emoji: "⚖️", label: { bg: "Контролен съвет", en: "Supervisory Board" }, short: { bg: "Контр. съвет", en: "Board" } },
+  { to: "/sabraniya", emoji: "🗳️", label: { bg: "Събрания", en: "Assemblies" }, short: { bg: "Събрания", en: "Assemblies" } },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -28,7 +29,7 @@ function TopBar() {
   const { l } = useLang();
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border/70 bg-background/80 backdrop-blur-xl">
+    <header className="print:hidden sticky top-0 z-30 border-b border-border/70 bg-background/80 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl flex-col lg:h-16 lg:flex-row lg:items-center lg:gap-6 lg:px-6">
         <div className="flex h-14 items-center justify-between px-4 lg:h-auto lg:px-0">
           <Link to="/" className="flex items-center gap-2.5">
