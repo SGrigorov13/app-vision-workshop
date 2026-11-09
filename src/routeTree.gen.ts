@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DomoupravitelRouteImport } from './routes/domoupravitel'
+import { Route as KontrolenSavetRouteImport } from './routes/kontrolen-savet'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DomoupravitelRoute = DomoupravitelRouteImport.update({
+  id: '/domoupravitel',
+  path: '/domoupravitel',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KontrolenSavetRoute = KontrolenSavetRouteImport.update({
+  id: '/kontrolen-savet',
+  path: '/kontrolen-savet',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/domoupravitel': typeof DomoupravitelRoute
+  '/kontrolen-savet': typeof KontrolenSavetRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/domoupravitel': typeof DomoupravitelRoute
+  '/kontrolen-savet': typeof KontrolenSavetRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/domoupravitel': typeof DomoupravitelRoute
+  '/kontrolen-savet': typeof KontrolenSavetRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/domoupravitel' | '/kontrolen-savet'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/domoupravitel' | '/kontrolen-savet'
+  id: '__root__' | '/' | '/domoupravitel' | '/kontrolen-savet'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DomoupravitelRoute: typeof DomoupravitelRoute
+  KontrolenSavetRoute: typeof KontrolenSavetRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +68,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/domoupravitel': {
+      id: '/domoupravitel'
+      path: '/domoupravitel'
+      fullPath: '/domoupravitel'
+      preLoaderRoute: typeof DomoupravitelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kontrolen-savet': {
+      id: '/kontrolen-savet'
+      path: '/kontrolen-savet'
+      fullPath: '/kontrolen-savet'
+      preLoaderRoute: typeof KontrolenSavetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DomoupravitelRoute: DomoupravitelRoute,
+  KontrolenSavetRoute: KontrolenSavetRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
