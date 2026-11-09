@@ -1,3 +1,4 @@
+import { useLang } from "@/lib/i18n";
 import { Link } from "@tanstack/react-router";
 import {
   AlertCircle,
@@ -42,13 +43,14 @@ import { useMockStore } from "@/lib/mock-store";
 import { cn } from "@/lib/utils";
 
 export function ManagerDashboard() {
+  const { l } = useLang();
   const [dialog, setDialog] = useState<null | "dunning" | "expense" | "report">(null);
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-6 lg:px-6 lg:py-8">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="animate-fade-up">
-          <p className="text-sm font-medium text-muted-foreground">{BUILDING.address} • {CURRENT_PERIOD}</p>
+          <p className="text-sm font-medium text-muted-foreground">{l(BUILDING.address)} • {l(CURRENT_PERIOD)}</p>
           <h1 className="mt-1 text-2xl font-bold sm:text-3xl">Табло на Домоуправителя</h1>
         </div>
         <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap">
@@ -189,6 +191,7 @@ function CashflowCard() {
 const DONUT_COLORS = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)"];
 
 function ExpenseDonutCard() {
+  const { l } = useLang();
   const { state, derived } = useMockStore();
   const data = useMemo(() => {
     const acc: Record<string, number> = {};
@@ -198,7 +201,7 @@ function ExpenseDonutCard() {
       .sort((a, b) => b.value - a.value);
   }, [state.expenses]);
 
-  const config = Object.fromEntries(data.map((d, i) => [d.key, { label: d.name, color: DONUT_COLORS[i % 5] }])) as ChartConfig;
+  const config = Object.fromEntries(data.map((d, i) => [d.key, { label: l(d.name), color: DONUT_COLORS[i % 5] }])) as ChartConfig;
 
   return (
     <div className="rounded-3xl border border-border bg-card p-5 shadow-card">
@@ -229,7 +232,7 @@ function ExpenseDonutCard() {
         {data.map((d, i) => (
           <div key={d.key} className="flex items-center gap-2 text-xs">
             <span className="size-2.5 rounded-full" style={{ backgroundColor: DONUT_COLORS[i % 5] }} />
-            <span className="flex-1 font-medium">{d.name}</span>
+            <span className="flex-1 font-medium">{l(d.name)}</span>
             <span className="tabular font-semibold">{formatEUR(d.value)}</span>
           </div>
         ))}
@@ -241,6 +244,7 @@ function ExpenseDonutCard() {
 /* ---------------- Ledger ---------------- */
 
 function Ledger() {
+  const { l } = useLang();
   const { state, payApartment } = useMockStore();
   const markCash = (no: number, amount: number) => {
     payApartment(no, "cash");
@@ -279,7 +283,7 @@ function Ledger() {
               <tr key={a.no} className="border-b border-border/60 transition-colors last:border-0 hover:bg-muted/40">
                 <td className="tabular px-5 py-3 font-bold">{a.no}</td>
                 <td className="tabular px-3 py-3">{a.floor}</td>
-                <td className="px-3 py-3 font-medium">{a.owner}</td>
+                <td className="px-3 py-3 font-medium">{l(a.owner)}</td>
                 <td className="tabular px-3 py-3 text-center">
                   {a.occupants}
                   {a.pets > 0 && <span className="text-muted-foreground"> +{a.pets}🐾</span>}
@@ -313,7 +317,7 @@ function Ledger() {
             <div className="flex items-center gap-3">
               <span className="tabular grid size-10 place-items-center rounded-xl bg-card font-bold shadow-card">{a.no}</span>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold">{a.owner}</p>
+                <p className="truncate text-sm font-semibold">{l(a.owner)}</p>
                 <p className="text-xs text-muted-foreground">
                   Ет. {a.floor} • {a.occupants} живущи{a.pets ? ` + ${a.pets}🐾` : ""} • {formatPercent(a.idealParts)}
                 </p>
@@ -346,6 +350,7 @@ function StatusBadge({ paid, months }: { paid: boolean; months: number }) {
 /* ---------------- Recent expenses ---------------- */
 
 function RecentExpenses() {
+  const { l } = useLang();
   const { state } = useMockStore();
   const list = [...state.expenses].reverse().slice(0, 5);
   return (
@@ -360,11 +365,11 @@ function RecentExpenses() {
         {list.map((e) => (
           <div key={e.id} className="flex items-center gap-3 py-3 animate-fade-up">
             <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-muted text-xs font-bold text-muted-foreground">
-              {EXPENSE_CATEGORY_LABEL[e.category].slice(0, 2)}
+              {l(EXPENSE_CATEGORY_LABEL[e.category]).slice(0, 2)}
             </span>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold">{e.description}</p>
-              <p className="truncate text-xs text-muted-foreground">{e.provider} • {e.date} • {FUND_META[e.fund].label}</p>
+              <p className="truncate text-sm font-semibold">{l(e.description)}</p>
+              <p className="truncate text-xs text-muted-foreground">{l(e.provider)} • {e.date} • {l(FUND_META[e.fund].label)}</p>
             </div>
             <p className="tabular text-sm font-bold">−{formatEUR(e.amount)}</p>
           </div>
@@ -379,6 +384,7 @@ function RecentExpenses() {
 type DunningEntry = { id: string; apt: number; owner: string; day: number; channel: "push" | "email"; amount: number };
 
 function DunningDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
+  const { l } = useLang();
   const { state } = useMockStore();
   const [auto, setAuto] = useState(true);
   const [running, setRunning] = useState(false);
@@ -397,7 +403,7 @@ function DunningDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o
     for (const day of [0, 3, 6])
       for (const a of overdue)
         for (const channel of ["push", "email"] as const)
-          queue.push({ id: `${day}-${a.no}-${channel}`, apt: a.no, owner: a.owner, day, channel, amount: a.overdueAmount });
+          queue.push({ id: `${day}-${a.no}-${channel}`, apt: a.no, owner: l(a.owner), day, channel, amount: a.overdueAmount });
     setLog([]);
     setRunning(true);
     let i = 0;
@@ -466,6 +472,7 @@ function DunningDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o
 /* ---------------- Expense ---------------- */
 
 function ExpenseDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
+  const { l } = useLang();
   const { addExpense } = useMockStore();
   const [provider, setProvider] = useState("");
   const [amount, setAmount] = useState("");
@@ -549,7 +556,7 @@ function ExpenseDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {(Object.keys(FUND_META) as FundKey[]).map((k) => (
-                    <SelectItem key={k} value={k}>{FUND_META[k].label}</SelectItem>
+                    <SelectItem key={k} value={k}>{l(FUND_META[k].label)}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -560,7 +567,7 @@ function ExpenseDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {(Object.keys(EXPENSE_CATEGORY_LABEL) as Expense["category"][]).map((k) => (
-                    <SelectItem key={k} value={k}>{EXPENSE_CATEGORY_LABEL[k]}</SelectItem>
+                    <SelectItem key={k} value={k}>{l(EXPENSE_CATEGORY_LABEL[k])}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>

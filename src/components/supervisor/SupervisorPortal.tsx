@@ -1,3 +1,4 @@
+import { useLang } from "@/lib/i18n";
 import {
   CheckCircle2,
   Clock,
@@ -30,6 +31,7 @@ import { cn } from "@/lib/utils";
 const MIN_COMMENT = 10;
 
 export function SupervisorPortal() {
+  const { l } = useLang();
   const { state, derived, castVote, rejectReport, resetReport } = useMockStore();
   const [approveOpen, setApproveOpen] = useState(false);
   const [rejectOpen, setRejectOpen] = useState(false);
@@ -43,7 +45,7 @@ export function SupervisorPortal() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="animate-fade-up">
           <p className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
-            <Scale className="size-4" /> Портал на Контролния съвет • {BUILDING.address}
+            <Scale className="size-4" /> Портал на Контролния съвет • {l(BUILDING.address)}
           </p>
           <h1 className="mt-1 text-2xl font-bold sm:text-3xl">Тримесечен отчет Q4-2026</h1>
           <p className="mt-1 text-xs text-muted-foreground">Получен от Домоуправителя на {state.reportSentAt}</p>
@@ -85,9 +87,9 @@ export function SupervisorPortal() {
             {SUPERVISORS.map((s) => (
               <VoterRow
                 key={s.id}
-                name={s.name}
-                role={s.role}
-                initials={s.initials}
+                name={l(s.name)}
+                role={l(s.role)}
+                initials={l(s.initials)}
                 isYou={s.isYou}
                 vote={state.votes[s.id]}
                 onSimulate={
@@ -135,9 +137,9 @@ export function SupervisorPortal() {
             {state.expenses.map((e) => (
               <div key={e.id} className="flex items-center gap-3 py-3">
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold">{e.description}</p>
+                  <p className="truncate text-sm font-semibold">{l(e.description)}</p>
                   <p className="truncate text-xs text-muted-foreground">
-                    {e.date} • {e.provider} • {FUND_META[e.fund].label}
+                    {e.date} • {l(e.provider)} • {l(FUND_META[e.fund].label)}
                   </p>
                 </div>
                 <p className="tabular text-sm font-bold">{formatEUR(e.amount)}</p>
@@ -440,6 +442,7 @@ function RejectDialog({
 }
 
 function InvoiceDialog({ expense, onClose }: { expense: Expense | null; onClose: () => void }) {
+  const { l } = useLang();
   return (
     <Dialog open={!!expense} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="sm:max-w-md">
@@ -461,19 +464,19 @@ function InvoiceDialog({ expense, onClose }: { expense: Expense | null; onClose:
             <div className="mt-4 grid grid-cols-2 gap-3 text-xs">
               <div>
                 <p className="font-semibold opacity-60">Доставчик</p>
-                <p className="font-medium">{expense.provider}</p>
+                <p className="font-medium">{l(expense.provider)}</p>
               </div>
               <div>
                 <p className="font-semibold opacity-60">Получател</p>
-                <p className="font-medium">{BUILDING.beneficiary}</p>
+                <p className="font-medium">{l(BUILDING.beneficiary)}</p>
               </div>
             </div>
             <div className="mt-4 border-y border-qr-foreground/15 py-3 text-xs">
               <div className="flex justify-between gap-3">
-                <span>{expense.description}</span>
+                <span>{l(expense.description)}</span>
                 <span className="tabular font-semibold">{formatEUR(expense.amount)}</span>
               </div>
-              <p className="mt-1 opacity-60">Категория: {EXPENSE_CATEGORY_LABEL[expense.category]} • {FUND_META[expense.fund].label}</p>
+              <p className="mt-1 opacity-60">Категория: {l(EXPENSE_CATEGORY_LABEL[expense.category])} • {l(FUND_META[expense.fund].label)}</p>
             </div>
             <div className="mt-3 flex justify-between text-sm font-bold">
               <span>Общо за плащане</span>
