@@ -5,7 +5,7 @@ import {
   CURRENT_PERIOD,
   CURRENT_USER,
   INITIAL_APARTMENTS,
-  INITIAL_APARTMENTS as APTS,
+
   INITIAL_EXPENSE_REQUESTS,
   INITIAL_EXPENSES,
   INITIAL_FUNDS,
@@ -48,7 +48,7 @@ type State = {
 const pendingVotes = (): Record<SupervisorId, VoteState> =>
   Object.fromEntries(SUPERVISORS.map((s) => [s.id, { status: "pending" }])) as Record<SupervisorId, VoteState>;
 
-export const MEETING_UNITS = APTS.map((a) => ({ no: a.no, idealParts: a.idealParts, owner: a.owner }));
+export const MEETING_UNITS = INITIAL_APARTMENTS.map((a) => ({ no: a.no, idealParts: a.idealParts, owner: a.owner }));
 
 const initialState = (): State => ({
   apartments: INITIAL_APARTMENTS.map((a) => ({ ...a })),
