@@ -217,4 +217,23 @@ export const INITIAL_TICKETS: Ticket[] = [
 export const SUPERVISORS = [
   { id: "ivan", name: { bg: "Иван Георгиев", en: "Ivan Georgiev" }, role: { bg: "Председател на КС", en: "Board chair" }, initials: { bg: "ИГ", en: "IG" }, isYou: true },
   { id: "elena", name: { bg: "Елена Димитрова", en: "Elena Dimitrova" }, role: { bg: "Член на КС", en: "Board member" }, initials: { bg: "ЕД", en: "ED" }, isYou: false },
-] as const satisfies ReadonlyArray<{ id: "ivan" | "elena"; name: L; role: L; initials: L; isYou: boolean }>;
+  { id: "petar", name: { bg: "Петър Димитров", en: "Petar Dimitrov" }, role: { bg: "Член на КС", en: "Board member" }, initials: { bg: "ПД", en: "PD" }, isYou: false },
+] as const satisfies ReadonlyArray<{ id: SupervisorId; name: L; role: L; initials: L; isYou: boolean }>;
+
+export type SupervisorId = "ivan" | "elena" | "petar";
+
+/** A current expense the manager asks the board to approve. */
+export type ExpenseRequest = {
+  id: string;
+  date: string; // DD.MM.YYYY
+  description: Text;
+  provider: Text;
+  amount: number;
+  votes: Partial<Record<SupervisorId, "approve" | "reject">>;
+};
+
+export const INITIAL_EXPENSE_REQUESTS: ExpenseRequest[] = [
+  { id: "r1", date: "06.11.2026", description: { bg: "Подмяна на счупено стъкло, прозорец 3-ти етаж", en: "Replace broken window glass, 3rd floor" }, provider: { bg: "Стъкларски услуги ЕТ", en: "Glass Services" }, amount: 140, votes: {} },
+  { id: "r2", date: "09.11.2026", description: { bg: "Ремонт на домофонна система", en: "Intercom system repair" }, provider: P.lock, amount: 265, votes: {} },
+  { id: "r3", date: "10.11.2026", description: { bg: "Боядисване на стълбището (всички етажи)", en: "Repaint the staircase (all floors)" }, provider: { bg: "Бояджия Строй ООД", en: "Boyadzhiya Stroy Ltd" }, amount: 1250, votes: {} },
+];

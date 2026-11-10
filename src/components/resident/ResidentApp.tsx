@@ -58,6 +58,7 @@ import {
 } from "@/lib/mock-data";
 import { useMockStore } from "@/lib/mock-store";
 import { PALETTES, useTheme } from "@/lib/theme";
+import { useCondoAddress } from "@/lib/platform-store";
 import { cn } from "@/lib/utils";
 
 type Tab = "home" | "bills" | "reports" | "profile";
@@ -97,12 +98,13 @@ export function ResidentApp() {
 
 function ResidentHeader() {
   const { l, pct } = useLang();
+  const address = useCondoAddress();
   return (
     <div className="flex items-start justify-between gap-3 px-5 pb-4 pt-4">
       <div className="min-w-0">
         <p className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
           <MapPin className="size-3.5 shrink-0" />
-          <span className="truncate">{l(BUILDING.address)}</span>
+          <span className="truncate">{address}</span>
         </p>
         <h1 className="mt-1 text-xl font-bold">
           {l("Здравей", "Hi")}, {l(CURRENT_USER.firstName)} 👋

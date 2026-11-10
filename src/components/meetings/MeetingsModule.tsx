@@ -27,6 +27,7 @@ import {
   type Vote,
 } from "@/lib/meetings";
 import { BUILDING, INITIAL_APARTMENTS } from "@/lib/mock-data";
+import { useCondoAddress } from "@/lib/platform-store";
 import { cn } from "@/lib/utils";
 
 const UNITS = INITIAL_APARTMENTS.map((a) => ({ no: a.no, idealParts: a.idealParts, owner: a.owner }));
@@ -39,6 +40,7 @@ function fmtDate(d: string) {
 export function MeetingsModule() {
   const { l } = useLang();
   const [meetings, setMeetings] = useState<Meeting[]>(INITIAL_MEETINGS);
+  const address = useCondoAddress();
   const [openId, setOpenId] = useState<string | null>(null);
   const open = meetings.find((m) => m.id === openId) ?? null;
 
@@ -69,7 +71,7 @@ export function MeetingsModule() {
     <div className="mx-auto w-full max-w-5xl px-4 py-6 lg:px-6 lg:py-8">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-sm font-medium text-muted-foreground">{l(BUILDING.address)}</p>
+          <p className="text-sm font-medium text-muted-foreground">{address}</p>
           <h1 className="mt-1 text-2xl font-bold sm:text-3xl">{l("Общи събрания", "General assemblies")}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {l("Дневен ред, кворум, гласуване и протокол по ЗУЕС", "Agenda, quorum, voting and minutes under the Condominium Act")}

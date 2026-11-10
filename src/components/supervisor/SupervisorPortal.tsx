@@ -26,6 +26,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { formatEUR } from "@/lib/format";
 import { BUILDING, EXPENSE_CATEGORY_LABEL, FUND_META, SUPERVISORS, type Expense } from "@/lib/mock-data";
 import { useMockStore, type ReportStatus, type VoteState } from "@/lib/mock-store";
+import { useCondoAddress } from "@/lib/platform-store";
 import { cn } from "@/lib/utils";
 
 const MIN_COMMENT = 10;
@@ -36,6 +37,7 @@ export function SupervisorPortal() {
   const [approveOpen, setApproveOpen] = useState(false);
   const [rejectOpen, setRejectOpen] = useState(false);
   const [invoice, setInvoice] = useState<Expense | null>(null);
+  const address = useCondoAddress();
   const status = derived.reportStatus;
   const myVote = state.votes.ivan;
   const decided = myVote.status === "approved" || myVote.status === "rejected";
@@ -45,7 +47,7 @@ export function SupervisorPortal() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="animate-fade-up">
           <p className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
-            <Scale className="size-4" /> Портал на Контролния съвет • {l(BUILDING.address)}
+            <Scale className="size-4" /> {l("Портал на Контролния съвет", "Supervisory board portal")} • {address}
           </p>
           <h1 className="mt-1 text-2xl font-bold sm:text-3xl">Тримесечен отчет Q4-2026</h1>
           <p className="mt-1 text-xs text-muted-foreground">Получен от Домоуправителя на {state.reportSentAt}</p>

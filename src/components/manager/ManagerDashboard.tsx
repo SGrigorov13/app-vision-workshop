@@ -40,17 +40,19 @@ import {
   type FundKey,
 } from "@/lib/mock-data";
 import { useMockStore } from "@/lib/mock-store";
+import { useCondoAddress } from "@/lib/platform-store";
 import { cn } from "@/lib/utils";
 
 export function ManagerDashboard() {
   const { l } = useLang();
   const [dialog, setDialog] = useState<null | "dunning" | "expense" | "report">(null);
+  const address = useCondoAddress();
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-6 lg:px-6 lg:py-8">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="animate-fade-up">
-          <p className="text-sm font-medium text-muted-foreground">{l(BUILDING.address)} • {l(CURRENT_PERIOD)}</p>
+          <p className="text-sm font-medium text-muted-foreground">{address} • {l(CURRENT_PERIOD)}</p>
           <h1 className="mt-1 text-2xl font-bold sm:text-3xl">Табло на Домоуправителя</h1>
         </div>
         <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap">

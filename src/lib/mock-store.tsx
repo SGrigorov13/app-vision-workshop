@@ -5,18 +5,25 @@ import {
   CURRENT_PERIOD,
   CURRENT_USER,
   INITIAL_APARTMENTS,
+
+  INITIAL_EXPENSE_REQUESTS,
   INITIAL_EXPENSES,
   INITIAL_FUNDS,
+  SUPERVISORS,
   INITIAL_PAYMENTS,
   INITIAL_TICKETS,
   Q4_INCOME,
   type Apartment,
   type Expense,
+  type ExpenseRequest,
   type FundKey,
+  type SupervisorId,
   type ResidentPayment,
   type Ticket,
 } from "./mock-data";
 import { round2 } from "./format";
+import { boardExpenseLimit, INITIAL_MEETINGS, type Meeting } from "./meetings";
+import { INITIAL_TXS, monthlyReports, type Tx } from "./treasury";
 
 export type VoteState = { status: "pending" | "voting" | "approved" | "rejected"; hash?: string; at?: string };
 export type ReportStatus = "UNDER_REVIEW" | "APPROVED" | "REJECTED";
@@ -28,10 +35,20 @@ type State = {
   expenses: Expense[];
   tickets: Ticket[];
   payments: ResidentPayment[];
-  votes: Record<"ivan" | "elena", VoteState>;
+  votes: Record<SupervisorId, VoteState>;
   rejectComment?: string | undefined;
   reportSentAt?: string | undefined;
+  txs: Tx[];
+  meetings: Meeting[];
+  expenseRequests: ExpenseRequest[];
+  /** Monthly report confirmations by board members, keyed by "YYYY-MM". */
+  monthVotes: Record<string, Partial<Record<SupervisorId, "approve" | "reject">>>;
 };
+
+const pendingVotes = (): Record<SupervisorId, VoteState> =>
+  Object.fromEntries(SUPERVISORS.map((s) => [s.id, { status: "pending" }])) as Record<SupervisorId, VoteState>;
+
+export const MEETING_UNITS = INITIAL_APARTMENTS.map((a) => ({ no: a.no, idealParts: a.idealParts, owner: a.owner }));
 
 const initialState = (): State => ({
   apartments: INITIAL_APARTMENTS.map((a) => ({ ...a })),
@@ -40,8 +57,12 @@ const initialState = (): State => ({
   expenses: [...INITIAL_EXPENSES],
   tickets: [...INITIAL_TICKETS],
   payments: [...INITIAL_PAYMENTS],
-  votes: { ivan: { status: "pending" }, elena: { status: "pending" } },
+  votes: pendingVotes(),
   reportSentAt: "01.01.2027",
+  txs: [...INITIAL_TXS],
+  meetings: INITIAL_MEETINGS.map((m) => ({ ...m })),
+  expenseRequests: INITIAL_EXPENSE_REQUESTS.map((r) => ({ ...r, votes: {} })),
+  monthVotes: { "2026-07": { ivan: "approve", elena: "approve", petar: "approve" }, "2026-08": { ivan: "approve", elena: "approve" } },
 });
 
 export function deriveReportStatus(votes: State["votes"]): ReportStatus {
@@ -116,13 +137,13 @@ function useStoreValue() {
     setState((s) => ({
       ...s,
       reportSentAt: nowLabel(),
-      votes: { ivan: { status: "pending" }, elena: { status: "pending" } },
+      votes: pendingVotes(),
       rejectComment: undefined,
     }));
   }, []);
 
   const castVote = useCallback(
-    async (who: "ivan" | "elena") => {
+    async (who: SupervisorId) => {
       setState((s) => ({ ...s, votes: { ...s.votes, [who]: { status: "voting" } } }));
       const payload = JSON.stringify({
         report: "Q4-2026",
@@ -152,9 +173,35 @@ function useStoreValue() {
   const resetReport = useCallback(() => {
     setState((s) => ({
       ...s,
-      votes: { ivan: { status: "pending" }, elena: { status: "pending" } },
+      votes: pendingVotes(),
       rejectComment: undefined,
     }));
+  }, []);
+
+  const addTxs = useCallback((txs: Tx[]) => {
+    setState((s) => ({ ...s, txs: [...s.txs, ...txs] }));
+  }, []);
+
+  const setMeetings = useCallback((fn: (m: Meeting[]) => Meeting[]) => {
+    setState((s) => ({ ...s, meetings: fn(s.meetings) }));
+  }, []);
+
+  const voteExpenseRequest = useCallback((id: string, who: SupervisorId, vote: "approve" | "reject") => {
+    setState((s) => ({
+      ...s,
+      expenseRequests: s.expenseRequests.map((r) => (r.id === id ? { ...r, votes: { ...r.votes, [who]: vote } } : r)),
+    }));
+  }, []);
+
+  const addExpenseRequest = useCallback((r: Omit<ExpenseRequest, "id" | "votes" | "date">) => {
+    setState((s) => ({
+      ...s,
+      expenseRequests: [{ ...r, id: `r-${Date.now()}`, date: nowLabel().slice(0, 10), votes: {} }, ...s.expenseRequests],
+    }));
+  }, []);
+
+  const voteMonth = useCallback((month: string, who: SupervisorId, vote: "approve" | "reject") => {
+    setState((s) => ({ ...s, monthVotes: { ...s.monthVotes, [month]: { ...s.monthVotes[month], [who]: vote } } }));
   }, []);
 
   const resetAll = useCallback(() => setState(initialState()), []);
@@ -172,6 +219,8 @@ function useStoreValue() {
       net: round2(Q4_INCOME - expensesTotal),
       reportStatus: deriveReportStatus(state.votes),
       myApartment: state.apartments.find((a) => a.no === CURRENT_USER.apartment)!,
+      boardLimit: boardExpenseLimit(state.meetings, MEETING_UNITS),
+      monthReports: monthlyReports(state.txs),
     };
   }, [state]);
 
@@ -186,6 +235,11 @@ function useStoreValue() {
     rejectReport,
     resetReport,
     resetAll,
+    addTxs,
+    setMeetings,
+    voteExpenseRequest,
+    addExpenseRequest,
+    voteMonth,
   };
 }
 

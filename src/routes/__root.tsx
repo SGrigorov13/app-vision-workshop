@@ -16,6 +16,7 @@ import { AppShell } from "@/components/app/AppShell";
 import { Toaster } from "@/components/ui/sonner";
 import { LangProvider } from "@/lib/i18n";
 import { MockStoreProvider } from "@/lib/mock-store";
+import { PlatformProvider } from "@/lib/platform-store";
 import { THEME_BOOT_SCRIPT, ThemeProvider, useTheme } from "@/lib/theme";
 
 function NotFoundComponent() {
@@ -141,12 +142,14 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <LangProvider>
-        <MockStoreProvider>
-          <AppShell>
-            <Outlet />
-          </AppShell>
-          <ThemedToaster />
-        </MockStoreProvider>
+          <PlatformProvider>
+            <MockStoreProvider>
+              <AppShell>
+                <Outlet />
+              </AppShell>
+              <ThemedToaster />
+            </MockStoreProvider>
+          </PlatformProvider>
         </LangProvider>
       </ThemeProvider>
     </QueryClientProvider>
