@@ -146,9 +146,15 @@ function NewTx({ onAdd, cash, bank }: { onAdd: (t: Tx) => void; cash: number; ba
 
   const submit = () => {
     const a = Number(amount.replace(",", "."));
-    if (!(a > 0)) return toast.error(l("Въведете сума", "Enter an amount"));
+    if (!(a > 0)) {
+      toast.error(l("Въведете сума", "Enter an amount"));
+      return;
+    }
     const available = box === "cash" ? cash : bank;
-    if (kind !== "income" && a > available) return toast.error(l("Недостатъчна наличност в касата", "Not enough in this box"));
+    if (kind !== "income" && a > available) {
+      toast.error(l("Недостатъчна наличност в касата", "Not enough in this box"));
+      return;
+    }
     const to: CashboxId = box === "cash" ? "bank" : "cash";
     onAdd({
       id: `t-${Date.now()}`,
