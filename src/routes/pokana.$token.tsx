@@ -47,8 +47,14 @@ function InvitePage() {
   const home = ROLE_HOME[inv.r[0] ?? "resident"];
 
   const submit = () => {
-    if (pw.length < 8) return toast.error(l("Паролата трябва да е поне 8 символа", "Password must be at least 8 characters"));
-    if (pw !== pw2) return toast.error(l("Паролите не съвпадат", "Passwords do not match"));
+    if (pw.length < 8) {
+      toast.error(l("Паролата трябва да е поне 8 символа", "Password must be at least 8 characters"));
+      return;
+    }
+    if (pw !== pw2) {
+      toast.error(l("Паролите не съвпадат", "Passwords do not match"));
+      return;
+    }
     acceptInvite(inv.i);
     const condoId = inv.i.split(":")[0];
     if (condos.some((c) => c.id === condoId)) setActiveId(condoId!);

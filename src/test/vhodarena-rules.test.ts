@@ -36,8 +36,8 @@ describe("VhodArena rules", () => {
   });
 
   it("report is approved only when every supervisor approves (100% consensus)", () => {
-    expect(deriveReportStatus({ ivan: { status: "approved" }, elena: { status: "pending" } })).toBe("UNDER_REVIEW");
-    expect(deriveReportStatus({ ivan: { status: "approved" }, elena: { status: "approved" } })).toBe("APPROVED");
-    expect(deriveReportStatus({ ivan: { status: "rejected" }, elena: { status: "approved" } })).toBe("REJECTED");
+    expect(deriveReportStatus({ ivan: { status: "approved" }, elena: { status: "pending" }, petar: { status: "approved" } })).toBe("UNDER_REVIEW");
+    expect(deriveReportStatus({ ivan: { status: "approved" }, elena: { status: "approved" }, petar: { status: "approved" } })).toBe("APPROVED");
+    expect(deriveReportStatus({ ivan: { status: "rejected" }, elena: { status: "approved" }, petar: { status: "approved" } })).toBe("REJECTED");
   });
 });
