@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as DomoupravitelRouteImport } from './routes/domoupravitel'
+import { Route as KasiRouteImport } from './routes/kasi'
 import { Route as KontrolenSavetRouteImport } from './routes/kontrolen-savet'
 import { Route as SabraniyaRouteImport } from './routes/sabraniya'
 
@@ -19,9 +21,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DomoupravitelRoute = DomoupravitelRouteImport.update({
   id: '/domoupravitel',
   path: '/domoupravitel',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KasiRoute = KasiRouteImport.update({
+  id: '/kasi',
+  path: '/kasi',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KontrolenSavetRoute = KontrolenSavetRouteImport.update({
@@ -37,34 +49,61 @@ const SabraniyaRoute = SabraniyaRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/domoupravitel': typeof DomoupravitelRoute
+  '/kasi': typeof KasiRoute
   '/kontrolen-savet': typeof KontrolenSavetRoute
   '/sabraniya': typeof SabraniyaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/domoupravitel': typeof DomoupravitelRoute
+  '/kasi': typeof KasiRoute
   '/kontrolen-savet': typeof KontrolenSavetRoute
   '/sabraniya': typeof SabraniyaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/domoupravitel': typeof DomoupravitelRoute
+  '/kasi': typeof KasiRoute
   '/kontrolen-savet': typeof KontrolenSavetRoute
   '/sabraniya': typeof SabraniyaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/domoupravitel' | '/kontrolen-savet' | '/sabraniya'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/domoupravitel'
+    | '/kasi'
+    | '/kontrolen-savet'
+    | '/sabraniya'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/domoupravitel' | '/kontrolen-savet' | '/sabraniya'
-  id: '__root__' | '/' | '/domoupravitel' | '/kontrolen-savet' | '/sabraniya'
+  to:
+    | '/'
+    | '/admin'
+    | '/domoupravitel'
+    | '/kasi'
+    | '/kontrolen-savet'
+    | '/sabraniya'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/domoupravitel'
+    | '/kasi'
+    | '/kontrolen-savet'
+    | '/sabraniya'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
   DomoupravitelRoute: typeof DomoupravitelRoute
+  KasiRoute: typeof KasiRoute
   KontrolenSavetRoute: typeof KontrolenSavetRoute
   SabraniyaRoute: typeof SabraniyaRoute
 }
@@ -78,11 +117,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/domoupravitel': {
       id: '/domoupravitel'
       path: '/domoupravitel'
       fullPath: '/domoupravitel'
       preLoaderRoute: typeof DomoupravitelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kasi': {
+      id: '/kasi'
+      path: '/kasi'
+      fullPath: '/kasi'
+      preLoaderRoute: typeof KasiRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/kontrolen-savet': {
@@ -104,7 +157,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
   DomoupravitelRoute: DomoupravitelRoute,
+  KasiRoute: KasiRoute,
   KontrolenSavetRoute: KontrolenSavetRoute,
   SabraniyaRoute: SabraniyaRoute,
 }
