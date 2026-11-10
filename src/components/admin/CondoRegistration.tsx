@@ -23,7 +23,10 @@ export function CondoRegistration() {
   const submit = () => {
     const e = validateCondo(c);
     setErrors(e);
-    if (e.length) return toast.error(l("Проверете отбелязаните полета", "Check the highlighted fields"));
+    if (e.length) {
+      toast.error(l("Проверете отбелязаните полета", "Check the highlighted fields"));
+      return;
+    }
     setRegistered((r) => [...r, c]);
     setC(EMPTY);
     toast.success(l("Етажната собственост е регистрирана", "Condominium registered"));
