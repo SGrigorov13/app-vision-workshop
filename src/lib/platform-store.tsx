@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useMemo, useState, type ReactNo
 
 import { accessStatus, addMonths, planMonths, subscriptionPrice, type AccessStatus, type Plan, type YearMonth } from "./billing";
 import { buildInvites, encodeInvite, type Invite, type People } from "./invitations";
+import { useLang } from "./i18n";
 import { BUILDING } from "./mock-data";
 
 export type Building = {
@@ -216,4 +217,11 @@ export function usePlatform() {
   const ctx = useContext(Ctx);
   if (!ctx) throw new Error("usePlatform must be used within PlatformProvider");
   return ctx;
+}
+
+/** Address line of the open condominium (bilingual for the demo building). */
+export function useCondoAddress(): string {
+  const { active } = usePlatform();
+  const { l } = useLang();
+  return active.isDemo ? l(BUILDING.address) : active.address;
 }

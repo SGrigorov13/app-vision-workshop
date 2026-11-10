@@ -45,7 +45,7 @@ export function SupervisorPortal() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="animate-fade-up">
           <p className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
-            <Scale className="size-4" /> Портал на Контролния съвет • {l(BUILDING.address)}
+            <Scale className="size-4" /> {l("Портал на Контролния съвет", "Supervisory board portal")} • {address}
           </p>
           <h1 className="mt-1 text-2xl font-bold sm:text-3xl">Тримесечен отчет Q4-2026</h1>
           <p className="mt-1 text-xs text-muted-foreground">Получен от Домоуправителя на {state.reportSentAt}</p>

@@ -102,7 +102,7 @@ function ResidentHeader() {
       <div className="min-w-0">
         <p className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
           <MapPin className="size-3.5 shrink-0" />
-          <span className="truncate">{l(BUILDING.address)}</span>
+          <span className="truncate">{address}</span>
         </p>
         <h1 className="mt-1 text-xl font-bold">
           {l("Здравей", "Hi")}, {l(CURRENT_USER.firstName)} 👋

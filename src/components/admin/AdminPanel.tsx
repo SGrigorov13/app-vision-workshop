@@ -407,9 +407,11 @@ function PeopleStep({ people, setPeople, errors }: { people: People; setPeople: 
       </Group>
 
       <Group title={l("Контролен съвет * (един или повече)", "Supervisory board * (one or more)")} error={err("board")}>
-        {people.board.map((x, i) =>
-          row(`board.${i}`, x, (v) => setPeople((p) => ({ ...p, board: p.board.map((y, j) => (j === i ? v : y)) })), people.board.length > 1 ? () => setPeople((p) => ({ ...p, board: p.board.filter((_, j) => j !== i) })) : undefined),
-        )}
+        {people.board.map((x, i) => (
+          <div key={x.id}>
+            {row(`board.${i}`, x, (v) => setPeople((p) => ({ ...p, board: p.board.map((y, j) => (j === i ? v : y)) })), people.board.length > 1 ? () => setPeople((p) => ({ ...p, board: p.board.filter((_, j) => j !== i) })) : undefined)}
+          </div>
+        ))}
         <Button size="sm" variant="ghost" className="w-fit" onClick={() => setPeople((p) => ({ ...p, board: [...p.board, person()] }))}>
           <Plus /> {l("Добави член", "Add member")}
         </Button>
