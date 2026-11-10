@@ -69,6 +69,8 @@ export type AgendaItem = {
   majority: Majority;
   discussion: string;
   votes: Record<number, Vote>;
+  /** When set, adopting this item sets the max current expense (EUR) the board may approve. */
+  expenseLimit?: number | undefined;
 };
 
 export type MeetingStatus = "scheduled" | "in_progress" | "finalized";
@@ -104,6 +106,7 @@ export const INITIAL_MEETINGS: Meeting[] = [
       { id: "a1", title: "Приемане на отчета на Домоуправителя за Q3–Q4 2026", description: "Обобщение на месечните отчети, проверени от Контролния съвет.", majority: "simple", discussion: "", votes: {} },
       { id: "a2", title: "Ремонт на покрива – избор на изпълнител", description: "Три оферти: 8 400 €, 9 150 €, 10 200 €. Финансиране от Фонд „Ремонт и обновяване“.", majority: "q67", discussion: "", votes: {} },
       { id: "a3", title: "Актуализация на месечната такса за поддръжка", description: "Предложение: от 7,20 € на 7,80 € на обитател.", majority: "simple", discussion: "", votes: {} },
+      { id: "a4", title: "Лимит за текущи разходи, одобрявани от Контролния съвет", description: "Контролният съвет одобрява с мнозинство текущи разходи до 300 € на разход.", majority: "simple", discussion: "", votes: {}, expenseLimit: 300 },
     ],
   },
   {
@@ -138,3 +141,16 @@ export const INITIAL_MEETINGS: Meeting[] = [
     ],
   },
 ];
+
+/** Latest board expense limit adopted at a finalized assembly; null = the board may not approve expenses. */
+export function boardExpenseLimit(meetings: Meeting[], units: Unit[]): number | null {
+  const done = meetings.filter((m) => m.status === "finalized").sort((a, b) => b.date.localeCompare(a.date));
+  for (const m of done) {
+    const represented = representedParts(units, m.attendance);
+    for (const a of [...m.agenda].reverse()) {
+      if (a.expenseLimit === undefined) continue;
+      if (isAdopted(a.majority, tally(units, m.attendance, a.votes), represented, units)) return a.expenseLimit;
+    }
+  }
+  return null;
+}
