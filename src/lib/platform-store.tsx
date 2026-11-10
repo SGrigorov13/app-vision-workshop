@@ -61,6 +61,23 @@ const DEMO_CONDO: CondoRecord = {
   createdAt: "01.06.2026",
 };
 
+function withInvites(c: CondoRecord): CondoRecord {
+  const invites = buildInvites(
+    c.people,
+    (x) => encodeInvite({ c: c.name, a: c.address, r: x.roles, n: x.name, e: x.email, ap: x.apartment, i: `${c.id}:${x.id}` }),
+    c.createdAt,
+  ).map((i) => ({ ...i, status: "accepted" as const }));
+  return { ...c, invites };
+}
+
+const simplePeople = (manager: string, board: string, resident: string): People => ({
+  manager: p("m", manager, `${manager.split(" ")[0]!.toLowerCase()}@example.com`),
+  cashierSameAsManager: true,
+  cashier: p("c", "", ""),
+  board: [p("b1", board, "board@example.com")],
+  residents: [{ ...p("r1", resident, "resident@example.com"), apartment: "1" }],
+});
+
 const EXTRA_CONDOS: CondoRecord[] = [
   {
     ...DEMO_CONDO,
@@ -74,6 +91,7 @@ const EXTRA_CONDOS: CondoRecord[] = [
     units: 44,
     iban: "BG18RZBB91550123456789",
     bic: "RZBBBGSF",
+    people: simplePeople("Николай Стоянов", "Ангел Ангелов", "Даниела Кирова"),
     plan: "annual",
     paidThrough: "2027-03",
     payments: [{ id: "sp2", date: "28.03.2026", plan: "annual", amount: 69.99, from: "2026-04", to: "2027-03" }],
@@ -92,6 +110,7 @@ const EXTRA_CONDOS: CondoRecord[] = [
     iban: "",
     bic: "",
     cashEnabled: false,
+    people: simplePeople("Росица Пенева", "Тодор Илиев", "Калина Петкова"),
     plan: "monthly",
     paidThrough: "2026-10",
     payments: [{ id: "sp3", date: "29.09.2026", plan: "monthly", amount: 4.99, from: "2026-10", to: "2026-10" }],
@@ -110,7 +129,7 @@ export function makeInviteUrl(token: string) {
 }
 
 function usePlatformValue() {
-  const [condos, setCondos] = useState<CondoRecord[]>(() => [DEMO_CONDO, ...EXTRA_CONDOS]);
+  const [condos, setCondos] = useState<CondoRecord[]>(() => [DEMO_CONDO, ...EXTRA_CONDOS].map(withInvites));
   const [activeId, setActiveId] = useState("demo");
   /** Demo override of "today" so the 29th-of-month blocking can be tried out. */
   const [demoDate, setDemoDate] = useState<string | null>(null);
