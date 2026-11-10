@@ -26,6 +26,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { formatEUR } from "@/lib/format";
 import { BUILDING, EXPENSE_CATEGORY_LABEL, FUND_META, SUPERVISORS, type Expense } from "@/lib/mock-data";
 import { useMockStore, type ReportStatus, type VoteState } from "@/lib/mock-store";
+import { useCondoAddress } from "@/lib/platform-store";
 import { cn } from "@/lib/utils";
 
 const MIN_COMMENT = 10;
@@ -36,6 +37,7 @@ export function SupervisorPortal() {
   const [approveOpen, setApproveOpen] = useState(false);
   const [rejectOpen, setRejectOpen] = useState(false);
   const [invoice, setInvoice] = useState<Expense | null>(null);
+  const address = useCondoAddress();
   const status = derived.reportStatus;
   const myVote = state.votes.ivan;
   const decided = myVote.status === "approved" || myVote.status === "rejected";

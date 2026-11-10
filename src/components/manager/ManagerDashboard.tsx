@@ -40,11 +40,13 @@ import {
   type FundKey,
 } from "@/lib/mock-data";
 import { useMockStore } from "@/lib/mock-store";
+import { useCondoAddress } from "@/lib/platform-store";
 import { cn } from "@/lib/utils";
 
 export function ManagerDashboard() {
   const { l } = useLang();
   const [dialog, setDialog] = useState<null | "dunning" | "expense" | "report">(null);
+  const address = useCondoAddress();
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-6 lg:px-6 lg:py-8">

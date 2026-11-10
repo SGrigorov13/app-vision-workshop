@@ -15,6 +15,7 @@ import { Route as DomoupravitelRouteImport } from './routes/domoupravitel'
 import { Route as KasiRouteImport } from './routes/kasi'
 import { Route as KontrolenSavetRouteImport } from './routes/kontrolen-savet'
 import { Route as SabraniyaRouteImport } from './routes/sabraniya'
+import { Route as PokanaTokenRouteImport } from './routes/pokana.$token'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +47,11 @@ const SabraniyaRoute = SabraniyaRouteImport.update({
   path: '/sabraniya',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PokanaTokenRoute = PokanaTokenRouteImport.update({
+  id: '/pokana/$token',
+  path: '/pokana/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/kasi': typeof KasiRoute
   '/kontrolen-savet': typeof KontrolenSavetRoute
   '/sabraniya': typeof SabraniyaRoute
+  '/pokana/$token': typeof PokanaTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/kasi': typeof KasiRoute
   '/kontrolen-savet': typeof KontrolenSavetRoute
   '/sabraniya': typeof SabraniyaRoute
+  '/pokana/$token': typeof PokanaTokenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,6 +79,7 @@ export interface FileRoutesById {
   '/kasi': typeof KasiRoute
   '/kontrolen-savet': typeof KontrolenSavetRoute
   '/sabraniya': typeof SabraniyaRoute
+  '/pokana/$token': typeof PokanaTokenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -81,6 +90,7 @@ export interface FileRouteTypes {
     | '/kasi'
     | '/kontrolen-savet'
     | '/sabraniya'
+    | '/pokana/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -89,6 +99,7 @@ export interface FileRouteTypes {
     | '/kasi'
     | '/kontrolen-savet'
     | '/sabraniya'
+    | '/pokana/$token'
   id:
     | '__root__'
     | '/'
@@ -97,6 +108,7 @@ export interface FileRouteTypes {
     | '/kasi'
     | '/kontrolen-savet'
     | '/sabraniya'
+    | '/pokana/$token'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -106,6 +118,7 @@ export interface RootRouteChildren {
   KasiRoute: typeof KasiRoute
   KontrolenSavetRoute: typeof KontrolenSavetRoute
   SabraniyaRoute: typeof SabraniyaRoute
+  PokanaTokenRoute: typeof PokanaTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -152,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SabraniyaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pokana/$token': {
+      id: '/pokana/$token'
+      path: '/pokana/$token'
+      fullPath: '/pokana/$token'
+      preLoaderRoute: typeof PokanaTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -162,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   KasiRoute: KasiRoute,
   KontrolenSavetRoute: KontrolenSavetRoute,
   SabraniyaRoute: SabraniyaRoute,
+  PokanaTokenRoute: PokanaTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

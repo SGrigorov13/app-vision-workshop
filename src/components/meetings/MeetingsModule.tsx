@@ -27,6 +27,7 @@ import {
   type Vote,
 } from "@/lib/meetings";
 import { BUILDING, INITIAL_APARTMENTS } from "@/lib/mock-data";
+import { useCondoAddress } from "@/lib/platform-store";
 import { cn } from "@/lib/utils";
 
 const UNITS = INITIAL_APARTMENTS.map((a) => ({ no: a.no, idealParts: a.idealParts, owner: a.owner }));
@@ -39,6 +40,7 @@ function fmtDate(d: string) {
 export function MeetingsModule() {
   const { l } = useLang();
   const [meetings, setMeetings] = useState<Meeting[]>(INITIAL_MEETINGS);
+  const address = useCondoAddress();
   const [openId, setOpenId] = useState<string | null>(null);
   const open = meetings.find((m) => m.id === openId) ?? null;
 
