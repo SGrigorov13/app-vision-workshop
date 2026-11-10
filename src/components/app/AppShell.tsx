@@ -1,6 +1,10 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Building2, Check, Monitor, Moon, Palette, Sun } from "lucide-react";
+import { Building2, Check, ChevronsUpDown, Info, Lock, Monitor, Moon, Palette, Plus, Sun } from "lucide-react";
 import type { ReactNode } from "react";
+
+import { Badge } from "@/components/ui/badge";
+import { nextDeadline, subscriptionPrice } from "@/lib/billing";
+import { usePlatform } from "@/lib/platform-store";
 
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -17,12 +21,113 @@ const ROLES: Array<{ to: "/" | "/domoupravitel" | "/kontrolen-savet" | "/sabrani
   { to: "/admin", emoji: "🏢", label: { bg: "Регистрация ЕС", en: "Register condo" }, short: { bg: "Админ", en: "Admin" } },
 ];
 
+/** Sections that stay reachable when the active condominium is blocked for non-payment. */
+const ALWAYS_OPEN = ["/admin", "/pokana"];
+
 export function AppShell({ children }: { children: ReactNode }) {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { active, activeStatus } = usePlatform();
+  const open = ALWAYS_OPEN.some((p) => pathname.startsWith(p));
+  const blocked = activeStatus === "blocked" && !open;
+
   return (
     <div className="flex min-h-dvh flex-col bg-background">
       <TopBar />
-      <main className="flex flex-1 flex-col">{children}</main>
+      {!open && !blocked && !active.isDemo && <SampleDataBanner name={active.name} />}
+      <main className="flex flex-1 flex-col">{blocked ? <BlockedScreen /> : children}</main>
     </div>
+  );
+}
+
+function SampleDataBanner({ name }: { name: string }) {
+  const { l } = useLang();
+  return (
+    <div className="print:hidden border-b border-border bg-accent/50 px-4 py-2 text-center text-xs text-accent-foreground">
+      <Info className="mr-1 inline size-3.5" />
+      {l(`${name}: показани са примерни финансови данни, докато се въведат първите движения.`, `${name}: sample financial data is shown until the first entries are made.`)}
+    </div>
+  );
+}
+
+function BlockedScreen() {
+  const { l, eur } = useLang();
+  const { active } = usePlatform();
+  return (
+    <div className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center px-6 py-16 text-center">
+      <span className="grid size-16 place-items-center rounded-3xl bg-destructive/12 text-destructive">
+        <Lock className="size-8" />
+      </span>
+      <h1 className="mt-5 text-2xl font-bold">{l("Достъпът е спрян", "Access suspended")}</h1>
+      <p className="mt-2 text-sm text-muted-foreground">
+        {l(
+          `Абонаментът за „${active.name}“ не е платен до ${nextDeadline(active.paidThrough)}. Достъпът ще се възстанови веднага след плащане.`,
+          `The subscription for “${active.name}” was not paid by ${nextDeadline(active.paidThrough)}. Access returns as soon as it is paid.`,
+        )}
+      </p>
+      <p className="mt-3 text-sm font-semibold">
+        {eur(subscriptionPrice(active.units, "monthly"))} {l("/ месец", "/ month")} · {eur(subscriptionPrice(active.units, "annual"))} {l("/ година", "/ year")}
+      </p>
+      <Button asChild className="mt-6">
+        <Link to="/admin" search={{ tab: "billing" }}>{l("Към плащане", "Go to payment")}</Link>
+      </Button>
+    </div>
+  );
+}
+
+export function CondoSwitcher({ className }: { className?: string }) {
+  const { l } = useLang();
+  const { condos, active, setActiveId, statusOf } = usePlatform();
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          className={cn(
+            "flex min-w-0 items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-left text-xs font-semibold shadow-card transition-colors hover:bg-muted",
+            className,
+          )}
+          aria-label={l("Избор на етажна собственост", "Choose condominium")}
+        >
+          <Building2 className="size-3.5 shrink-0 text-primary" />
+          <span className="truncate">{active.name}</span>
+          {statusOf(active) === "blocked" && <Lock className="size-3.5 shrink-0 text-destructive" />}
+          <ChevronsUpDown className="size-3.5 shrink-0 text-muted-foreground" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align="start" className="w-80 rounded-2xl p-2">
+        <p className="px-2 pb-2 pt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          {l("Етажни собствености", "Condominiums")}
+        </p>
+        <div className="grid gap-1">
+          {condos.map((c) => {
+            const st = statusOf(c);
+            return (
+              <button
+                key={c.id}
+                onClick={() => setActiveId(c.id)}
+                className={cn("flex items-center gap-3 rounded-xl px-2 py-2 text-left transition-colors hover:bg-muted", active.id === c.id && "bg-muted")}
+              >
+                <Building2 className="size-4 shrink-0 text-muted-foreground" />
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-semibold">{c.name}</span>
+                  <span className="block text-xs text-muted-foreground">
+                    {c.units} {l("апартамента", "apartments")}
+                  </span>
+                </span>
+                {st === "blocked" ? (
+                  <Badge variant="destructive">{l("Спрян", "Blocked")}</Badge>
+                ) : st === "due" ? (
+                  <Badge variant="warning">{l("За плащане", "Due")}</Badge>
+                ) : null}
+                {active.id === c.id && <Check className="size-4 text-primary" />}
+              </button>
+            );
+          })}
+          <Link to="/admin" search={{ tab: "new" }} className="flex items-center gap-2 rounded-xl px-2 py-2 text-sm font-semibold text-primary hover:bg-muted">
+            <Plus className="size-4" /> {l("Регистрирай нова", "Register new")}
+          </Link>
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }
 
@@ -33,16 +138,17 @@ function TopBar() {
   return (
     <header className="print:hidden sticky top-0 z-30 border-b border-border/70 bg-background/80 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl flex-col lg:h-16 lg:flex-row lg:items-center lg:gap-6 lg:px-6">
-        <div className="flex h-14 items-center justify-between px-4 lg:h-auto lg:px-0">
-          <Link to="/" className="flex items-center gap-2.5">
+        <div className="flex h-14 items-center justify-between gap-2 px-4 lg:h-auto lg:px-0">
+          <Link to="/" className="flex shrink-0 items-center gap-2.5" aria-label="VhodArena.eu">
             <span className="grid size-9 place-items-center rounded-xl bg-gradient-brand text-primary-foreground shadow-glow">
               <Building2 className="size-5" />
             </span>
-            <span className="font-display text-lg font-bold tracking-tight">
+            <span className="hidden font-display text-lg font-bold tracking-tight sm:inline">
               VhodArena<span className="text-muted-foreground">.eu</span>
             </span>
           </Link>
-          <div className="flex items-center gap-1 lg:hidden">
+          <CondoSwitcher className="max-w-[46vw] sm:max-w-[16rem] lg:hidden" />
+          <div className="flex shrink-0 items-center lg:hidden">
             <LangToggle />
             <PalettePicker />
             <ThemePicker />
@@ -75,6 +181,7 @@ function TopBar() {
         </nav>
 
         <div className="hidden items-center gap-1 lg:flex">
+          <CondoSwitcher className="max-w-[12rem]" />
           <LangToggle />
           <PalettePicker />
           <ThemePicker />
